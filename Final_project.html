@@ -1,0 +1,323 @@
+<html>
+	<head>
+		<title>俄羅斯輪盤</title>
+		<style>
+		tr:nth-child(even){background-color: #ffe0b3}
+			.top{
+			font-size:21px;
+			font-family:微軟正黑體; 
+			letter-spacing:5px;
+			color:white;
+			font-weight:bolder;
+			}
+		</style>
+
+	</head>
+
+	<body onload="GiveMoney()" style="background-color: white;font-family:Microsoft JhengHei;" >
+		<canvas id="wheelcanvas" width="600" height="600"></canvas> 
+		<table style="position:absolute;top:100px;left:660px;border:8px #FFD382 groove ; color:#993300 ;" cellpadding="10" border='0' width="100px"  > <!--下注-->
+			<tr>
+			<td id=a  align="center" class="n" onclick="SE(10,this)">10</td><td id=b align="center" onclick="SE(20,this)">20</td><td id=c align="center" onclick="SE(50,this)">50</td>
+			</tr>
+			<tr>
+			<td id=1 align="center" class="n" onclick="putmoney(this)">1</td><td id=2 align="center" onclick="putmoney(this)">2</td><td id=3 align="center" onclick="putmoney(this)">3</td>
+			</tr>
+			<tr>
+			<td id=4 align="center" class="n" onclick="putmoney(this)">4</td><td id=5 align="center" onclick="putmoney(this)">5</td><td id=6 align="center" onclick="putmoney(this)">6</td>
+			</tr>
+			<tr>
+			<td id=7 align="center" class="n" onclick="putmoney(this)">7</td><td id=8 align="center" onclick="putmoney(this)">8</td><td id=9 align="center" onclick="putmoney(this)">9</td>
+			</tr>
+			</table>
+		</div>
+		
+		<script type="application/javascript">  
+			var startAngle = 5.03;
+			var arc = Math.PI / 5;
+			var spinTimeout = null;
+			var spinsize = 320;
+  
+			var spinArcStart = 10;
+			var spinTime = 0;
+			var spinTimeTotal = 0;
+  
+			var ctx;
+			var total = 100 ;
+			var check = new Array("0","0","0","0","0","0","0","0","0");  
+			var decrease = new Array("1","1","1","1","1","1","1","1","1");
+			window.addEventListener("keydown", checkKeyPressed, false);
+ 
+			function checkKeyPressed(e) {
+				if (e.keyCode == "32") {
+					spin();
+				}
+			}
+
+			function putmoney(obj)
+			{
+				if (obj.className != "in")
+				{
+					if( m2 == "" )
+                       	m2 = "1" ;
+					obj.bgColor = "#fff5cc" ;
+					obj.className = "in" ;
+					decrease[obj.id] = m2;
+					check[obj.id] = "1";
+					total -=decrease[obj.id];
+					if( total < 0 )
+						document.getElementById("money").innerHTML ="broke";
+					else
+						document.getElementById("money").innerHTML ="$ " + total + " " ;
+				}
+				else
+				{
+					if(obj.id < 4 || obj.id > 6 )
+						obj.bgColor = "#ffeb99" ;
+					else
+						obj.bgColor = "white" ;
+					obj.className = "" ;
+					total+=decrease[obj.id];
+					check[obj.id] = "0";
+					document.getElementById("money").innerHTML ="$ " + total + " " ;
+				}
+			}
+			
+			function SE(a,obj)
+			{
+				m2=a;
+				if(a==10){
+					if (obj.className != "in")
+					{
+						obj.bgColor = " #ffeb99" ;
+						obj.className = "in" ;
+					}
+					else
+					{
+						obj.bgColor = "white" ;
+						obj.className = "" ;
+					}	
+				}
+				if(a==20){	
+					if (obj.className != "in")
+					{
+						obj.bgColor = "#ffe066" ;
+						obj.className = "in" ;
+					}
+					else
+					{
+						obj.bgColor = "white" ;
+						obj.className = "" ;
+					}	
+				}
+				if(a==50)
+				{	
+					if (obj.className != "in")
+					{
+						obj.bgColor = "#ffcc00" ;
+						obj.className = "in" ;
+
+					}
+					else
+					{
+						obj.bgColor = "white" ;
+						obj.className = "" ;
+					}	
+				}
+			}
+			function draw() {
+				drawRouletteWheel();
+			}
+  
+			function isEven(n) {
+				return (n % 2 == 0);
+			}
+
+			function isOdd(n) {
+				return (Math.abs(n) % 2 == 1);
+			}
+  
+			function getText(i) {
+				var text;
+				if (i == 9)
+					text = "00";
+				else if (isEven(i))
+					text = (i+1).toString();
+				else if (isOdd(i))
+					text = (i+1).toString();
+				return text;
+			}
+
+			function drawRouletteWheel() {
+				var canvas = document.getElementById("wheelcanvas");
+				if (canvas.getContext) {
+					var outsideRadius = 220 ;
+					var textRadius = 160 ;
+					var insideRadius = 125 ;
+      
+					ctx = canvas.getContext("2d"); //都有
+					ctx.clearRect(0,0,600,600); // ctx.clearRect(0,0,spinsize,spinsize);
+					ctx.strokeStyle = "black"; //圓盤框顏色
+					ctx.lineWidth = 1;
+					ctx.font = 'bold 33px Avenir Next, sans-serif';//字的大小
+      
+					for(var i = 0; i < 10; i++) {
+						var angle = startAngle + i * arc;
+        
+						if (i == 9)
+							ctx.fillStyle = "#ADD8E6";
+						else if (isEven(i+1))
+							ctx.fillStyle = "	#FFB6C1";
+						else if (isOdd(i+1))
+							ctx.fillStyle = "	#FFDEAD";
+        
+						ctx.beginPath();
+						ctx.arc(spinsize, spinsize, outsideRadius, angle, angle + arc, false);
+						ctx.arc(spinsize, spinsize, insideRadius, angle + arc, angle, true);
+
+						ctx.stroke();
+						ctx.fill();
+        
+						ctx.save();
+        
+						if (i == 9)
+							ctx.fillStyle = "	#E9967A";
+						else if (isEven(i+1))
+							ctx.fillStyle = "	#708090";
+						else if (isOdd(i+1))
+							ctx.fillStyle = "white";
+							ctx.translate(spinsize + Math.cos(angle + arc / 2) * textRadius, spinsize + Math.sin(angle + arc / 2) * textRadius);
+							ctx.rotate(angle + arc / 2 + Math.PI / 2);
+						var text = getText(i);
+							ctx.fillText(text, -ctx.measureText(text).width / 2, 0);
+							ctx.restore();
+					} 
+      
+					//Arrow
+					ctx.fillStyle = "gold";
+					ctx.beginPath();
+					ctx.moveTo(spinsize - 8, spinsize - (outsideRadius + 10));
+					ctx.lineTo(spinsize + 8, spinsize - (outsideRadius + 10));
+					ctx.lineTo(spinsize + 8, spinsize - (outsideRadius - 10));
+					ctx.lineTo(spinsize + 18, spinsize - (outsideRadius - 10));
+					ctx.lineTo(spinsize + 0, spinsize - (outsideRadius - 26));
+					ctx.lineTo(spinsize - 18, spinsize - (outsideRadius - 10));
+					ctx.lineTo(spinsize - 8, spinsize - (outsideRadius - 10));
+					ctx.lineTo(spinsize - 8, spinsize - (outsideRadius + 10));
+					ctx.fill();
+				}
+			}
+			
+			function spin() {
+				spinAngleStart = Math.random() * 10 + 10;
+				spinTime = 0;
+				spinTimeTotal = Math.random() * 3 + 4 * 1618;
+				rotateWheel();
+			}
+			
+  			function rotateWheel() {
+				spinTime += 30;
+				if(spinTime >= spinTimeTotal) {
+				stopRotateWheel();
+				return;
+				}
+			
+				var spinAngle = spinAngleStart - easeOut(spinTime, 0, spinAngleStart, spinTimeTotal);
+				startAngle += (spinAngle * Math.PI / 180);
+				drawRouletteWheel();
+				spinTimeout = setTimeout('rotateWheel()', 30);
+			}
+  
+			function stopRotateWheel() {
+				clearTimeout(spinTimeout);
+				var degrees = startAngle * 180 / Math.PI + 90;
+				var arcd = arc * 180 / Math.PI;
+				var index = Math.floor((360 - degrees % 360) / arcd);
+				ctx.save();
+			
+				if (index == 9) {
+					ctx.fillStyle = "#BA55D3";
+					ctx.shadowColor   = "white";
+				}
+				else if (isEven(index+1)) {
+					ctx.fillStyle = "#F4A460";
+					ctx.shadowColor   = "white";
+				}
+				else if (isOdd(index+1)) {
+					ctx.fillStyle = "	#FA8072";
+					ctx.shadowColor   = "white";
+				}
+				if( total < 0 )
+					document.getElementById("money").innerHTML ="broke";
+				else if ( check[index-1] == 1 )
+                {
+                    total += decrease[index]*10;
+                    document.getElementById("money").innerHTML ="$ " + total + " " ;
+                }
+                for(var i=0; i<9 ; i++)
+                {
+                	if(check[i] == 1)
+                    total -= decrease[index];
+                    document.getElementById("money").innerHTML ="$ " + total + " " ;
+                }
+				ctx.font = 'bold 100px sans-serif';
+				ctx.shadowOffsetX = -2;
+				ctx.shadowOffsetY = -2;
+				ctx.shadowBlur    = 1;
+
+				var text = getText(index);
+				ctx.fillText(text, spinsize - ctx.measureText(text).width / 2, spinsize + 20);
+				for(var i=0 ; i<9 ; i++)
+				{
+					check[i] = "0" ;
+				}
+				ctx.restore();
+				}
+  
+			function easeOut(t, b, c, d) {
+				var ts = (t/=d)*t;
+				var tc = ts*t;
+				return b+c*(tc + -3*ts + 3*t);
+			}
+			function GiveMoney()
+			{
+				document.getElementById("money").innerHTML ="$ " + total + " " ;
+			}
+			
+			
+			draw();
+  
+		</script>
+		<table id="money" style="position:absolute;top:320px;left:665px;width:130px;height:30px;border:2px #ffd382 dashed;background-color:white; color:#993300 ;text-align:center"  ></table><!--結論-->
+
+		<input type="button" value="RUN"onClick="spin()"style="position:absolute;top:580;left:280;width:100px;height:50px;border:2px #ffe0b3 dashed;background-color:white; color:#993300 ;font-size:25px"><!--開始按鈕-->
+
+		<img src="http://140.138.155.226/~s1061521/新資料夾/156.jpg " width="170" height="300" align = "right" style="position:absolute;top:350px;left:640px;" ></img><!--背景-->
+	</body>
+	
+
+
+</html>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>
+
+</title></head>
+<body>
+    <form method="post" action="./File_DownLoad_Wk_zip.aspx?File_name=%u7d50%u5408new.1.html&amp;type=3&amp;id=2307654" id="form1">
+<div class="aspNetHidden">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUKLTEzNDM3NzkxOWRkwneTr34MFXJYUKyKKda+DU4gQVM=" />
+</div>
+
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="629601C3" />
+</div>
+    <div>
+    
+    </div>
+    </form>
+</body>
+</html>

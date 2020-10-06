@@ -1,0 +1,215 @@
+
+<html>
+<head>
+</head>
+<script language="javascript">
+var size = 4;
+var times = 0;
+function put(event){
+	if ((typeof event == "undefined")||(!event))
+		event = window.event;
+	var e1 = event.target || event.srcElement;
+
+	if (e1.name == " "){
+	e1.bgColor = "#F5F5DC";
+    }
+	var x = e1.id.substring(0, 1);
+	var y = e1.id.substring(1, 2);	    
+	var y1,y2,x1,x2;	
+
+    y1=eval(y)+1;
+	if (y1<4){ 
+		var id2= ""+x+y1;
+		var e2 = document.getElementById(id2);
+		if (e2.name == " "){
+			e2.name = e1.name;
+            e1.name = " ";
+            e1.bgColor = "#F5F5DC";
+			e1.innerHTML = e1.name;
+			e2.innerHTML = e2.name;
+            times++;
+            document.getElementById('not').innerHTML="黃色-被移動過的格子<br>綠色-已經移到正確位置";
+            document.getElementById('times2').innerHTML="移動次數&nbsp:";
+          	document.getElementById('times1').innerHTML=times;
+		}	
+	}
+
+	y1=eval(y)-1;
+	if (y1>=0) { 
+		var id2= ""+x+y1;
+		var e2 = document.getElementById(id2);
+		if (e2.name == " ") {
+			e2.name = e1.name;
+			e1.name = " ";
+            e1.bgColor = "#F5F5DC";
+			e1.innerHTML = e1.name;
+			e2.innerHTML = e2.name;
+            times++;
+            document.getElementById('not').innerHTML="黃色-被移動過的格子<br>綠色-已經移到正確位置";
+            document.getElementById('times2').innerHTML="移動次數&nbsp:";
+            document.getElementById('times1').innerHTML=times;
+		}
+	}
+	
+	x1=eval(x)+1;
+	if (x1<4) { 
+		var id2= ""+x1+y;
+		var e2 = document.getElementById(id2);
+		if (e2.name == " ") {
+			e2.name = e1.name;
+			e1.name = " ";
+            e1.bgColor = "#F5F5DC";
+			e1.innerHTML = e1.name; 
+			e2.innerHTML = e2.name;
+            times++;
+            document.getElementById('not').innerHTML="黃色-被移動過的格子<br>綠色-已經移到正確位置";
+            document.getElementById('times2').innerHTML="移動次數&nbsp:";
+            document.getElementById('times1').innerHTML=times;            
+		}
+	}
+
+	x1=eval(x)-1;
+	if (x1>=0) { 
+		var id2= ""+x1+y;
+		var e2 = document.getElementById(id2);
+		if (e2.name == " ") {
+			e2.name = e1.name;
+			e1.name = " ";
+            e1.bgColor = "#F5F5DC";
+			e1.innerHTML = e1.name;
+			e2.innerHTML = e2.name;
+            times++;
+            document.getElementById('not').innerHTML="黃色-被移動過的格子<br>綠色-已經移到正確位置";
+            document.getElementById('times2').innerHTML="移動次數&nbsp:";
+            document.getElementById('times1').innerHTML=times;            
+		}
+	}
+	var check=1;
+    var num=1;
+	for(x=0;x<size;x++){
+		for(y=0;y<size;y++){
+			if(x==3 && y==3){
+				var id2= ""+x+y;
+				var e2 = document.getElementById(id2);
+				if(e2.name!=" ")
+					check=0;
+                num++;
+			}
+			else{
+				var id2= ""+x+y;
+				var e2 = document.getElementById(id2);
+				if(e2.name!=num)
+				    check=0;
+                 num++;
+			}
+            if(e2.name == num-1)
+            	e2.bgColor="#7FFFD4";
+		}
+	}
+    if(check==1 && num==17)
+        e2.bgColor="#7FFFD4";
+	if(check==1)
+		document.getElementById('win').innerHTML="<U>You Win!</U>";	
+}
+
+
+function init(){
+   var table = document.createElement("TABLE");
+   document.body.appendChild(table);
+   table.border = "1";
+   table.bordercolor = "#FAEBD7" ;
+   table.cellSpacing = "1";
+   table.bgColor = "F0F8FF";
+   table.align="center";	
+   document.getElementById('not').innerHTML="黃色-被移動過的格子<br>綠色-已經移到正確位置";
+   document.getElementById('times2').innerHTML="移動次數&nbsp:&nbsp&nbsp0";
+   var x, y, num1=1;
+   
+	for(x=0;x<size;x++){
+		r = table.insertRow(x);
+		for(y=0;y<size;y++){
+			c = r.insertCell(y);
+			c.width="80";
+			c.height="80";
+			if(x==3&&y==3)
+				c.name=" ";
+			else{
+				c.name=num1;
+				num1++;
+			}
+            if(x%2 == 1 && y%2 == 0 )
+            	c.bgColor = "#FFC0CB";
+            else if(x%2 == 0 && y%2 == 1 )
+            	c.bgColor = "#FFC0CB";
+            else c.bgColor = "#B0E0E6";
+			c.id = ""+x+y;
+			c.vAlign="center";
+			c.align="center";
+			c.onclick = put;
+			c.appendChild(document.createTextNode(c.name));
+		}
+	}
+    
+	var times=0;
+	var my_div = null;
+	var newDiv = null;	
+	var lx=3,ly=3;
+	var bid;
+	var block;
+	while(times<100){
+		bid= ""+lx+ly;
+		block=document.getElementById(bid);
+		var r= Math.floor(Math.random()*10)%4;
+		var tx=lx;
+		var ty=ly;
+		if(r==0){tx--;}
+		else if(r==1){ty--;}
+		else if(r==2){tx++;}
+		else if(r==3){ty++;}
+		if(tx>=0 && tx<4 && ty>=0 && ty<4){
+			lx=tx;
+			ly=ty;
+		    var cid=""+tx+ty;
+			var change= document.getElementById(cid);
+			block.name=change.name;
+			change.name=" ";
+			block.innerHTML = block.name;
+			change.innerHTML = change.name;
+			block.innerHTML = block.name;
+			change.innerHTML = change.name;		
+			times++;
+		}
+	}
+}
+</script>
+<body onLoad="init()">
+<div id=win style="position:absolute;border-width:5;border-style:hidden;top:10;left:150;font-size:40px"></div>
+<div id=times1 style="position:absolute;border-width:1;border-style:hidden;top:10;left:930;font-size:20px"></div>
+<div id=times2 style="position:absolute;border-width:1;border-style:hidden;top:10;left:830;font-size:20px"></div>
+<div id=not style="position:absolute;border-width:1;border-style:hidden;top:360;left:550;font-size:20px"></div>
+</body>
+
+</html>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>
+
+</title></head>
+<body>
+    <form method="post" action="./File_DownLoad_Wk_zip.aspx?File_name=1061416-hw2.html&amp;type=3&amp;id=2281528" id="form1">
+<div class="aspNetHidden">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUKLTEzNDM3NzkxOWRkwneTr34MFXJYUKyKKda+DU4gQVM=" />
+</div>
+
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="629601C3" />
+</div>
+    <div>
+    
+    </div>
+    </form>
+</body>
+</html>
